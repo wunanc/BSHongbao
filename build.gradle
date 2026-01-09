@@ -16,11 +16,17 @@ repositories {
         name = "bstats"
         url = "https://repo.bstats.org/repository/maven-public/"
     }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.0.2")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
 
 tasks {
