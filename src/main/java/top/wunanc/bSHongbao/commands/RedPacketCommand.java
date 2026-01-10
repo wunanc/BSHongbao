@@ -63,8 +63,6 @@ public class RedPacketCommand implements CommandExecutor, TabCompleter {
                 handleInfoCommand(player);
                 break;
             case "help":
-                sendHelpMessage(player);
-                break;
             default:
                 sendHelpMessage(player);
                 break;
