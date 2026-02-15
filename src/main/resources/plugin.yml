@@ -1,0 +1,22 @@
+name: BSHongbao
+version: '${version}'
+main: com.bSHongbao.BSHongbao
+api-version: '1.16'
+author: sigmoid
+description: 'A red packet plugin for Minecraft servers'
+depend: [Vault]
+
+commands:
+  BSHongbao:
+    description: 'Open red packet GUI'
+    usage: '/BSHongbao open'
+    permission: bshongbao.use
+    aliases: [hongbao, redpacket]
+
+permissions:
+  bshongbao.use:
+    description: 'Allows player to use red packet commands'
+    default: true
+  bshongbao.admin:
+    description: 'Allows player to manage red packets'
+    default: op

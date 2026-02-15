@@ -1,0 +1,16 @@
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver' version '0.8.0'
+}
+
+rootProject.name = 'BSHongbao'
+
+// 配置工具链下载仓库（使用 Foojay）
+toolchainManagement {
+    jvm {
+        javaRepositories {
+            repository("foojay") {
+                resolverClass = org.gradle.toolchains.foojay.FoojayToolchainResolver
+            }
+        }
+    }
+}
