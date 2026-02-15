@@ -1,82 +1,106 @@
-# BSHongbao 红包插件
+<div align="center">
 
-一个为 Minecraft 服务器提供“红包”玩法的插件，支持普通红包与拼手气红包两种模式，集成 Vault 经济，带可视化 GUI，自动过期退款与并发安全设计。
+# 🧧 BSHongbao (BS红包)
 
-## 功能特性
-- 🧧 两种红包类型：普通（平均分配）与拼手气（随机分配）
-- 💰 Vault 经济集成：通过 Vault 与主流经济插件兼容
-- 🎨 GUI 操作：在游戏内以菜单引导完成红包创建
-- ⏰ 自动过期与退款：到期未领完的金额自动退还给发送者
-- 🔒 并发安全：领取操作加锁，防止重复领取/并发竞态
-- 📎 聊天可点击领取：广播可点击消息，一键领取
-- 🌐 版本兼容：API 1.16，实测支持 1.16+ 服务器（Spigot/Paper）
+[![Latest Build](https://img.shields.io/github/v/release/wunanc/BSHongbao?label=%E6%9C%80%E6%96%B0%E6%9E%84%E5%BB%BA%E4%B8%8B%E8%BD%BD&logo=github&color=0aa344)](https://github.com/wunanc/BSHongbao/releases/latest)
+![Java](https://img.shields.io/badge/Java-21-blue.svg)
+![Platform](https://img.shields.io/badge/Platform-Paper%20%7C%20Folia-brightgreen.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## 环境依赖
-- 服务器：Spigot/Paper 1.16+
-- 插件：Vault + 任一经济插件（如 EssentialsX 经济）
+**BSHongbao** 是一款为现代 Minecraft 服务器设计的轻量化、高性能红包插件。它不仅提供了传统的红包玩法，还针对 **Folia** 异步架构进行了深度优化，确保在高并发、多线程环境下依然稳定可靠。
 
-## 安装与启用
-1. 确保服务器已安装 Vault 与经济插件并正常工作。
-2. 将构建出的 `BSHongbao-1.1.0.jar` 放入服务器 `plugins/` 目录。
-3. 启动/重启服务器，插件将自动生成默认配置文件。
+</div>
 
-## 指令与权限
-- 指令（主命令及别名）
-  - `/BSHongbao open` 打开红包 GUI
-  - `/hongbao open` 同上
-  - `/redpacket open` 同上
-  - `/BSHongbao reload` 重载配置（需要管理员权限）
-  - `/BSHongbao info` 查看运行信息（需要管理员权限）
-- 权限
-  - `bshongbao.use` 基本使用权限（默认所有玩家）
-  - `bshongbao.admin` 管理权限（默认 OP）
+---
 
-## 使用方法
-- 发送红包
-  1) 使用 `/BSHongbao open` 打开 GUI
-  2) 选择红包类型（普通/拼手气）
-  3) 按提示在聊天输入总金额与份数
-  4) 成功扣款后将自动广播可点击的领取消息
-- 领取红包
-  - 聊天中点击“[点击领取]”，系统自动完成领取与入账
-  - 每名玩家对同一红包仅能领取一次；发送者不能领取自己的红包
+## ✨ 功能特性
 
-## 配置说明（摘录）
-文件：`plugins/BSHongbao/config.yml`
-- redpacket.min-total-amount：最小红包总额（默认 1000.00）
-- redpacket.max-packet-count：最大份数（默认 50）
-- redpacket.expiration-minutes：过期时间（分钟，默认 5）
-- redpacket.min-single-amount：单个最小金额（默认 0.01）
-- messages.*：前缀/提示/错误/广播等文本
-- items.*：GUI 物品与槽位
-- debug：调试日志开关
+- **🧧 多样玩法**：
+  - **普通红包**：金额平均分配，公平公正。
+  - **拼手气红包**：采用二倍均值算法，随机心跳，尽享“欧皇”时刻。
+- **🎮 极致交互**：
+  - **全 GUI 操作**：从创建到配置，全程图形化引导，无需记忆繁琐指令。
+  - **交互式聊天栏**：红包发送后全服广播，玩家点击聊天框即可领取。
+- **⚡ 架构领先**：
+  - **Folia 原生支持**：深度适配区域线程调度，完美解决多线程环境下的经济与 GUI 安全问题。
+  - **兼容性广**：原生支持 1.20+，兼容 Paper、Spigot、Folia 及其分支。
+- **🛡️ 资产保障**：
+  - **自动退款**：未领完的红包在到期后自动结算并退回至玩家账户。
+  - **并发加锁**：底层领取逻辑原子化，彻底杜绝刷钱、重复领取等漏洞。
 
-## 实现要点（简要）
-- 红包创建即从发送者余额一次性扣款（通过 Vault）
-- 红包内部金额按类型生成（普通=平均，拼手气=二倍均值法）
-- 领取过程使用同步加锁，且对过期/已领完/重复领取均进行判定
-- 定时任务轮询过期红包，剩余金额自动加入待退款并在玩家在线时结算
+---
 
-## 安全性与已知问题（重要）
-以下条目是当前实现中需要注意的风险点与改进建议（本次仅提示，不做改动）：
-- 经济与部分 Bukkit API 在异步聊天回调中被调用。
-  - 影响：`AsyncPlayerChatEvent` 路径中执行扣款、创建红包与广播，可能导致并发不安全、随机报错甚至被恶意刷崩。建议将扣款+创建+广播封装为主线程任务执行。
-- 领取时“入账失败”的补偿缺失。
-  - 影响：若 Vault 存款失败，系统仅提示错误，已占用的该份金额不会回滚到红包或加入退款，可能造成资金遗失。建议在存款失败时将该份金额重新回退到红包或加入发送者待退款。
-- 未强制校验“单份最低金额”与配置项一致。
-  - 影响：拼手气红包内部已保障单份最低 0.01，但未与 `redpacket.min-single-amount` 动态联动，若服主配置更高阈值，实际生成可能低于配置。建议在金额生成前基于配置进行校验与调整。
-- 持久化缺失导致异常重启时资金风险。
-  - 影响：红包与待退款记录存于内存，若服务器/进程异常崩溃，可能出现已扣款但红包/退款状态丢失，造成损失。建议引入文件/数据库持久化与启动时恢复。
-- 小额金额的浮点/四舍五入差异风险。
-  - 影响：插件内部使用 BigDecimal 保留两位，但 Vault 接口以 double 交互，极端情况下不同经济实现的舍入策略差异可能导致微小误差。建议对接经济插件的最小货币单位进行对齐校验（例如禁止小于最小单位的红包）。
-- 速率限制与冷却未实现。
-  - 影响：玩家可在余额允许范围内高频创建红包，可能用于刷屏/骚扰。建议加入冷却、每人同时活跃红包上限等限制（非直接“刷钱”，但属于滥用风险）。
+## 🛠️ 环境要求
 
-以上风险不会直接产生“凭空刷钱”的路径（扣款在创建时即完成，领取仅做再分配），但在极端环境下可能造成“资金丢失”或“服务不稳定”问题，建议尽快完善。
+| 组件 | 要求                                                     |
+| :--- |:-------------------------------------------------------|
+| **服务器核心** | Paper / Folia / Spigot (1.20+)                         |
+| **Java 版本** | Java 21+ (1.20.5+ 强制要求)                                |
+| **基础依赖** | [Vault](https://www.spigotmc.org/resources/vault.343/) |
+| **经济插件** | EssentialsX, CMI, Treasury 等支持 Vault 的插件               |
 
-## 版本信息
-- 插件版本：1.1.0
-- API 版本：1.16
-- 作者：sigmoid
+---
 
-—— 祝你和你的玩家玩得开心！🧧✨
+## 🚀 指令与权限
+
+### 玩家命令
+| 指令 | 描述 | 权限节点 |
+| :--- | :--- | :--- |
+| `/hb open` | 打开红包主菜单 | `bshongbao.use` |
+| `/hb help` | 显示帮助信息 | `bshongbao.use` |
+
+### 管理员命令
+| 指令 | 描述 | 权限节点 |
+| :--- | :--- | :--- |
+| `/hb reload` | 重新加载配置文件 | `bshongbao.admin` |
+| `/hb info` | 查看系统运行状态与退款信息 | `bshongbao.admin` |
+
+> *注：`/BSHongbao` 的简短别名为 `/hb`, `/hongbao`, `/redpacket`*
+
+---
+
+## 📦 安装指南
+
+1. 下载最新的 `BSHongbao-x.x.x.jar`。
+2. 将插件放入服务器的 `plugins` 文件夹。
+3. 重启服务器以生成默认配置。
+4. (可选) 修改 `config.yml` 以自定义消息内容、物品材质或最低金额。
+
+---
+
+## 📄 配置文件预览 (config.yml)
+
+```yaml
+redpacket:
+  min-total-amount: 1000.00  # 发红包的最低门槛
+  max-packet-count: 50       # 单个红包最大份数
+  expiration-minutes: 5      # 5分钟未领完自动退还
+  min-single-amount: 0.01    # 每个红包最低领到多少钱
+
+messages:
+  prefix: "&6[红包] &r"
+  chat:
+    packet-sent: "&e{player} &f发了一个&c【{type}】&f红包，&a[点击领取]"
+    packet-claimed: "&e{claimer} &f领了 &e{sender} &f的红包，金额 &a{amount}"
+```
+
+---
+
+## 🛠️ 开发者说明 (Build)
+
+如果你想自行编译此插件，请确保本地环境已安装 JDK 21。
+
+```bash
+git clone https://github.com/wunanc/BSHongbao.git
+cd BSHongbao
+./gradlew build
+```
+
+---
+
+## 👥 开发团队
+
+*   **原始作者**: [Sigmoid](https://github.com/sigmoid) (v1.x)
+*   **维护更新**: [Wunanc / Hotguo](https://github.com/wunanc) (v2.x)
+
+---
