@@ -1,7 +1,10 @@
 name: BSHongbao
 version: '${version}'
 main: com.bSHongbao.BSHongbao
-api-version: '1.16'
+# 提升到 1.20 确保兼容性
+api-version: '1.20'
+# 必须添加此行，Folia 才会加载插件
+folia-supported: true
 author: sigmoid
 description: 'A red packet plugin for Minecraft servers'
 depend: [Vault]
@@ -12,6 +15,10 @@ commands:
     usage: '/BSHongbao open'
     permission: bshongbao.use
     aliases: [hongbao, redpacket]
+  # 隐藏领取命令，防止玩家手动输入
+  bshongbao_claim:
+    description: '领取红包命令'
+    permission: bshongbao.use
 
 permissions:
   bshongbao.use:

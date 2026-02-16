@@ -74,6 +74,10 @@ public class ConfigManager {
         String prefix = config.getString("messages.prefix", "&6[红包] &r");
         return ChatColor.translateAlternateColorCodes('&', prefix);
     }
+
+    public String getSimplePrefix() {
+        return config.getString("messages.simple-prefix", "&6[红包] &r");
+    }
     
     /**
      * 获取GUI标题
@@ -87,7 +91,7 @@ public class ConfigManager {
      * 获取消息并格式化
      */
     public String getMessage(String path) {
-        String message = config.getString(path, "Message not found: " + path);
+        String message = config.getString(path, "消息语句未找到: " + path + "尝试删除配置文件重新生成或者是在github上找到缺失部分");
         return getPrefix() + ChatColor.translateAlternateColorCodes('&', message);
     }
     
@@ -111,7 +115,7 @@ public class ConfigManager {
      * 获取原始消息（不带前缀）
      */
     public String getRawMessage(String path) {
-        String message = config.getString(path, "Message not found: " + path);
+        String message = config.getString(path, "消息语句未找到: " + path + "尝试删除配置文件重新生成或者是在github上找到缺失部分");
         return ChatColor.translateAlternateColorCodes('&', message);
     }
     

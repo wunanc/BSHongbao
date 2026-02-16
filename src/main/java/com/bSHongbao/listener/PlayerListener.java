@@ -54,27 +54,25 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-
-        // 检查玩家是否有活跃的红包创建会话
         RedPacketCreationSession session = plugin.getRedPacketGUI().getCreationSession(player.getUniqueId());
+
         if (session != null) {
-            // 总是取消消息显示，避免对话框信息刷屏
             event.setCancelled(true);
 
-            // 检查会话是否过期
-            if (session.isExpired()) {
-                // 切到安全线程提示并清理
-                SchedulerCompat.runGlobal(plugin, () -> {
+            // 【关键修改】在 Folia 中，必须将逻辑切回玩家所在的区域线程
+            // 使用我们之前写的 SchedulerCompat
+            SchedulerCompat.runEntityTask(plugin, player, () -> {
+                if (session.isExpired()) {
                     plugin.getRedPacketGUI().removeCreationSession(player.getUniqueId());
-                    player.sendMessage(plugin.getConfigManager().getMessage("messages.errors.packet-not-found").replace("红包不存在或已过期！", "输入超时，请重新开始！"));
-                });
-                return;
-            }
-
-            // 把业务逻辑调度到全局/主线程，避免在异步线程中进行经济/GUI操作
-            SchedulerCompat.runGlobal(plugin, () -> {
-                boolean handled = plugin.getRedPacketGUI().handleChatInput(player, event.getMessage());
-                // handled 已经通过取消聊天消息，且我们强制取消，避免重复输出
+                    player.sendMessage(plugin.getConfigManager().getMessage("messages.errors.packet-not-found")
+                            .replace("红包不存在或已过期！", "输入超时，请重新开始！"));
+                    return;
+                }
+                // 在区域线程安全地处理金额、份数、GUI、经济扣款
+                plugin.getRedPacketGUI().handleChatInput(player, event.getMessage());
+            }, () -> {
+                // 如果玩家在处理过程中下线了
+                plugin.getRedPacketGUI().removeCreationSession(player.getUniqueId());
             });
         }
     }

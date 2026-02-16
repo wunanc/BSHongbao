@@ -15,6 +15,15 @@ redpacket:
   # 最小单个红包金额 Minimum single packet amount
   min-single-amount: 0.01
 
+# 数据库设置 Database Settings (暂未使用)
+database:
+  # 数据保存类型 Data save type (file/mysql)
+  type: "file"
+
+  # 文件数据库设置 File database settings
+  file:
+    path: "data/redpackets.yml"
+
 # 消息设置 Message Settings
 messages:
   # 前缀 Prefix
@@ -40,11 +49,13 @@ messages:
     count-too-high: "&c红包份数不能超过 {max}"
     already-claimed: "&c您已经领取过这个红包了！"
     packet-not-found: "&c红包不存在或已过期！"
+    reload-error: "&c配置文件重载失败,请查看控制台输出信息!"
     
   # 成功消息 Success Messages
   success:
     packet-created: "&a成功创建红包！总金额: &6{amount} &a份数: &e{count}"
     packet-claimed: "&a恭喜！您领取了 &6{amount} &a的红包！"
+    reload-success: "&a配置文件已重新加载！"
     
   # 输入提示 Input Prompts
   prompts:
@@ -82,14 +93,5 @@ items:
     name: " "
     lore: []
 
-# 数据库设置 Database Settings
-database:
-  # 数据保存类型 Data save type (file/mysql)
-  type: "file"
-  
-  # 文件数据库设置 File database settings
-  file:
-    path: "data/redpackets.yml"
-    
 # 调试模式 Debug Mode
 debug: false

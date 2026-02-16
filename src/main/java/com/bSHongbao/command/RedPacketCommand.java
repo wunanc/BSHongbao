@@ -1,11 +1,13 @@
 package com.bSHongbao.command;
 
 import com.bSHongbao.BSHongbao;
+import com.bSHongbao.util.PlgColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,10 +25,11 @@ public class RedPacketCommand implements CommandExecutor, TabCompleter {
     }
     
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         // 检查是否为玩家
         if (!(sender instanceof Player)) {
-            sender.sendMessage(plugin.getConfigManager().getMessage("messages.errors.no-permission").replace("您没有权限使用此命令！", "此命令只能由玩家执行！"));
+            //sender.sendMessage("§c只有玩家可以使用此命令！");
+            PlgColor.sendPrefixedMessage(sender, PlgColor.RED + "只有玩家可以使用此命令！");
             return true;
         }
         
@@ -95,11 +98,13 @@ public class RedPacketCommand implements CommandExecutor, TabCompleter {
         
         try {
             plugin.getConfigManager().reloadConfig();
-            player.sendMessage(plugin.getConfigManager().getMessage("messages.success.packet-created").replace("成功创建红包！", "配置文件重载成功！"));
-            
-            plugin.getLogger().info("Configuration reloaded by " + player.getName());
+            //player.sendMessage(plugin.getConfigManager().getMessage("messages.success.packet-created").replace("成功创建红包！", "配置文件重载成功！"));
+            PlgColor.sendPrefixedMessage(player, PlgColor.convertLegacyToMiniMessage(plugin.getConfigManager().getRawMessage("messages.success.reload-success")));
+
+            plugin.getLogger().info( player.getName()+"重载了配置文件");
         } catch (Exception e) {
-            player.sendMessage(plugin.getConfigManager().getMessage("messages.errors.invalid-amount").replace("请输入有效的金额！", "配置文件重载失败！"));
+            //player.sendMessage(plugin.getConfigManager().getMessage("messages.errors.invalid-amount").replace("请输入有效的金额！", "配置文件重载失败！"));
+            PlgColor.sendPrefixedMessage(player, PlgColor.convertLegacyToMiniMessage(plugin.getConfigManager().getRawMessage("messages.errors.reload-error")));
             plugin.getLogger().warning("Failed to reload configuration: " + e.getMessage());
         }
     }

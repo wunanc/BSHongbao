@@ -4,46 +4,36 @@ plugins {
 }
 
 group = 'com.bshongbao'
-version = '1.2.0'
+version = '2.0.0'
 
 repositories {
     mavenCentral()
-    maven {
-        name = "spigotmc-repo"
-        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
-    }
-    maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
-    }
-    maven { url 'https://jitpack.io' }
+    // Paper 仓库 (包含 Folia API)
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+    // 使用 1.20.1 的 Paper API 作为基础（可完美兼容到 1.21.1）
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
 
 tasks {
     runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21")
+        // 调试时使用的版本
+        minecraftVersion("1.21.1")
     }
 }
 
-// 使用当前 JDK 进行交叉编译，生成 Java 8 兼容的字节码
 java {
-    // 不再强制使用 Toolchain，避免网络下载 JDK8 失败
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    // 1.20.5 - 1.21.1 必须使用 Java 21
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    // 使用 --release 8 确保 API/字节码均锁定到 Java 8
-    options.release = 8
 }
 
 processResources {

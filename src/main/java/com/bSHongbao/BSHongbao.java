@@ -5,6 +5,7 @@ import com.bSHongbao.listener.PlayerListener;
 import com.bSHongbao.manager.*;
 import com.bSHongbao.gui.RedPacketGUI;
 import com.bSHongbao.task.RedPacketTask;
+import com.bSHongbao.util.PlgColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,7 +41,9 @@ public final class BSHongbao extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        
+
+        PlgColor.init(this);
+
         // 初始化其他管理器
         economyManager = new EconomyManager(this);
         redPacketManager = new RedPacketManager(this);
